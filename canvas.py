@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 window=tk.Tk()
 window.geometry("600x500")
 window.title('Canvas')
@@ -15,5 +16,21 @@ canvas.create_arc(300,10,200,80,
                   style=tk.CHORD, 
                   outline='yellow',
                   width=3)
-canvas.create_text(0,0, text="Hola")
+canvas.create_text(30,140, text="BRY canva basico",fill='gray', width=1)
+canvas.create_window(150,100,window=ttk.Label(window, text="Esto es texto en el widget canvas"))
+def draw_on_canvas(event):
+    x=event.x
+    y=event.y
+    canvas.create_oval(x-brush_size/2,y-brush_size/2,x+brush_size/2,y+brush_size/2,fill="black")
+brush_size=2
+def brush_size_adjust(event):
+    global brush_size
+    if event.delta >0:
+        brush_size+=4
+    else:
+        brush_size-=4
+    brush_size=max(0,min(brush_size,50))
+    
+canvas.bind('<Motion>',draw_on_canvas)
+canvas.bind('<MouseWheel>',brush_size_adjust)
 window.mainloop()
