@@ -6,7 +6,7 @@ p2=[]
 p3=[]
 p4=[]
 p5=[]
-listasPuntos=[]
+listasPuntos=[[0,0],[0,0],[0,0],[0,0],[0,0]]
 VAL_MIN=0
 VAL_MAX=40
 X=0
@@ -16,7 +16,107 @@ puntoUno=0
 puntoDos=0
 distanciaCorta=0
 se_generaron_numeros=False
-def imprimirResultados():
+def menuPrincipal():
+    opcion='0'
+    global listasPuntos
+    while opcion!='5':
+        
+        print("PUNTOS | X | Y |")
+        print(f"p1     |{listasPuntos[0][0]}  | {listasPuntos[0][1]} |")
+        print(f"p2     |{listasPuntos[1][0]}  | {listasPuntos[1][1]} |")
+        print(f"p3     |{listasPuntos[2][0]}  | {listasPuntos[2][1]} |")
+        print(f"p4     |{listasPuntos[3][0]}  | {listasPuntos[3][1]} |")
+        print(f"p5     |{listasPuntos[4][0]}  | {listasPuntos[4][1]} |")
+        print("Elige una opcion: ")
+        print("1- Calcular.")
+        print("2- Generar Datos Aleatorios.")
+        print("3- Limpiar Resultados")
+        print("4- Ingresar Datos")
+        print("5- Salir")
+        print("Ingrese su opcion: ")
+        opcion=input()
+        if opcion=='1':
+            encontrarDistanciaCortaTerminal()
+            print("Presione entrar para continuar . . .")
+            input()
+        elif opcion=='2':
+            limpiarLista()
+            generarDatosTerminal()
+        elif opcion=='3':
+            limpiarLista()
+            listasPuntos=[[0,0],[0,0],[0,0],[0,0],[0,0]]
+        elif opcion=='4':
+            limpiarLista()
+            ingresarDatosTerminal()
+        elif opcion=='5':
+            print("Saliendo del programa . . .")
+            input()
+        else :
+            print("Opcion no valida ... Presione Enter para Continuar")
+            input()
+def ingresarDatosTerminal():
+    global listasPuntos
+    global puntoUno
+    global puntoDos
+    global listasPuntos
+    global distanciaCorta
+    global se_generaron_numeros
+    for i in range(5):
+        print(f"Punto {i+1}")
+        print("Ingrese el valor de X: ")
+        x=int(input())
+        print("Ingrese el valor de  Y: ")
+        y=int(input())
+        p=[x,y]
+        listasPuntos.append(p)
+    
+def generarDatosTerminal():
+    global se_generaron_numeros
+    global p1
+    global p2
+    global p3
+    global p4
+    global p5
+    global listasPuntos
+    se_generaron_numeros=True
+    p1 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p2 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p3 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p4 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p5 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    insertarListasEnListas()
+    
+                
+        
+    
+        
+def imprimitResultados():
+    global puntoUno
+    global puntoDos
+    print("Resultados: ")
+    print(f"Los puntos mas cercanos son  P{puntoUno+1}: {listasPuntos[puntoUno]} y P{puntoDos+1} : {listasPuntos[puntoDos]} \n con una distancia igual a {distanciaCorta}")
+        
+def encontrarDistanciaCortaTerminal():
+    global listasPuntos
+    global puntoUno
+    global puntoDos
+    global listasPuntos
+    global distanciaCorta
+    global se_generaron_numeros
+    distanciaCorta=sqrt(((listasPuntos[0][0]-listasPuntos[1][0])**2)+((listasPuntos[0][1]-listasPuntos[1][1])**2)) 
+    puntoUno=0
+    puntoDos=1
+    for i in range(len(listasPuntos)):
+        for j in range(i+1,len(listasPuntos)):
+            distancia=sqrt(((listasPuntos[i][X]-listasPuntos[j][X])**2)+((listasPuntos[i][Y]-listasPuntos[j][Y])**2)) 
+            if distancia<distanciaCorta:
+                puntoUno=i
+                puntoDos=j
+                distanciaCorta=distancia
+    imprimitResultados()
+        
+
+def imprimirResultadosInterface():
     global puntoUno
     global puntoDos
     etiquetaResultados.grid(row=7,column=3)
@@ -28,6 +128,17 @@ def insertarListasEnListas():
     listasPuntos.insert(2,p3)
     listasPuntos.insert(3,p4)
     listasPuntos.insert(4,p5)
+def insertarValoresEnEntries():
+    entradaP1X.insert(p1[X],f'{p1[X]}')
+    entradaP1Y.insert(p1[Y],f'{p1[Y]}')
+    entradaP2X.insert(p2[X],f'{p2[X]}')
+    entradaP2Y.insert(p2[Y],f'{p2[Y]}')
+    entradaP3X.insert(p3[X],f'{p3[X]}')
+    entradaP3Y.insert(p3[Y],f'{p3[Y]}')
+    entradaP4X.insert(p4[X],f'{p4[X]}')
+    entradaP4Y.insert(p4[Y],f'{p4[Y]}')
+    entradaP5X.insert(p5[X],f'{p5[X]}')
+    entradaP5Y.insert(p5[Y],f'{p5[Y]}')
 def EstablecerEntry0():
     entradaP1X.insert(0,"0")
     entradaP1Y.insert(0,"0")
@@ -88,7 +199,6 @@ def encontrarDistanciaCorta():
         capturarNumeros()
     
     distanciaCorta=sqrt(((listasPuntos[0][0]-listasPuntos[1][0])**2)+((listasPuntos[0][1]-listasPuntos[1][1])**2)) 
-    print(f"Primera: {distanciaCorta}")
     puntoUno=0
     puntoDos=1
     for i in range(len(listasPuntos)):
@@ -100,7 +210,7 @@ def encontrarDistanciaCorta():
                 distanciaCorta=distancia
                 
         
-    imprimirResultados()
+    imprimirResultadosInterface()
     se_generaron_numeros=False
     limpiarLista()
 
@@ -122,16 +232,8 @@ def generar():
     p5 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
     insertarListasEnListas()
     limpiarEntries()
-    entradaP1X.insert(p1[X],f'{p1[X]}')
-    entradaP1Y.insert(p1[Y],f'{p1[Y]}')
-    entradaP2X.insert(p2[X],f'{p2[X]}')
-    entradaP2Y.insert(p2[Y],f'{p2[Y]}')
-    entradaP3X.insert(p3[X],f'{p3[X]}')
-    entradaP3Y.insert(p3[Y],f'{p3[Y]}')
-    entradaP4X.insert(p4[X],f'{p4[X]}')
-    entradaP4Y.insert(p4[Y],f'{p4[Y]}')
-    entradaP5X.insert(p5[X],f'{p5[X]}')
-    entradaP5Y.insert(p5[Y],f'{p5[Y]}')
+    insertarValoresEnEntries()
+
     
     
 
@@ -182,7 +284,7 @@ boton_limpiar=tk.Button(panel,text="Limpiar",command=limpiar)
 boton_limpiar.grid(column=3,row=3)
 etiquetaResultadoNumerico=tk.Label(panel)
 etiquetaResultados=tk.Label(panel,text="Resultados: ")
-
+menuPrincipal()
 
 root.mainloop()
 
