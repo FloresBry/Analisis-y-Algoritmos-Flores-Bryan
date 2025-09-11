@@ -7,10 +7,49 @@ p3=[]
 p4=[]
 p5=[]
 listasPuntos=[]
+VAL_MIN=0
+VAL_MAX=40
+X=0
+Y=1
+TAMANIO_LISTA=2
 puntoUno=0
 puntoDos=0
 distanciaCorta=0
 se_generaron_numeros=False
+def imprimirResultados():
+    global puntoUno
+    global puntoDos
+    etiquetaResultados.grid(row=7,column=3)
+    etiquetaResultadoNumerico.config(text=f"Los puntos mas cercanos son  P{puntoUno+1}: {listasPuntos[puntoUno]} y P{puntoDos+1} : {listasPuntos[puntoDos]} \n con una distancia igual a {distanciaCorta}")
+    etiquetaResultadoNumerico.grid(row=7,column=4)
+def insertarListasEnListas():
+    listasPuntos.insert(0,p1)
+    listasPuntos.insert(1,p2)
+    listasPuntos.insert(2,p3)
+    listasPuntos.insert(3,p4)
+    listasPuntos.insert(4,p5)
+def EstablecerEntry0():
+    entradaP1X.insert(0,"0")
+    entradaP1Y.insert(0,"0")
+    entradaP2X.insert(0,"0")
+    entradaP2Y.insert(0,"0")
+    entradaP3X.insert(0,"0")
+    entradaP3Y.insert(0,"0")
+    entradaP4X.insert(0,"0")
+    entradaP4Y.insert(0,"0")
+    entradaP5X.insert(0,"0")
+    entradaP5Y.insert(0,"0")
+def limpiarEntries():
+    entradaP1X.delete(0,tk.END)
+    entradaP1Y.delete(0,tk.END)
+    entradaP2X.delete(0,tk.END)
+    entradaP2Y.delete(0,tk.END)
+    entradaP3X.delete(0,tk.END)
+    entradaP3Y.delete(0,tk.END)
+    entradaP4X.delete(0,tk.END)
+    entradaP4Y.delete(0,tk.END)
+    entradaP5X.delete(0,tk.END)
+    entradaP5Y.delete(0,tk.END)
 def funcionEuclidiana (p1,p2):
     distancia=sqrt(((p1[0]-p2[0])**2)+((p1[1]-p2[1])**2))
     print(distancia)
@@ -23,18 +62,22 @@ def capturarNumeros():
     global p5
     global listasPuntos
     p1=[int(entradaP1X.get()),int(entradaP1Y.get())]
-    listasPuntos.append(p1)
     p2=[int(entradaP2X.get()),int(entradaP2Y.get())]
-    listasPuntos.append(p2)
     p3=[int(entradaP3X.get()),int(entradaP3Y.get())]
-    listasPuntos.append(p3)
     p4=[int(entradaP4X.get()),int(entradaP4Y.get())]
-    listasPuntos.append(p4)
     p5=[int(entradaP5X.get()),int(entradaP5Y.get())]
-    listasPuntos.append(p5)
+    insertarListasEnListas()
     
 def limpiar():
-    root
+    limpiarEntries()
+    EstablecerEntry0()
+    etiquetaResultados.grid_forget()
+    etiquetaResultadoNumerico.grid_forget()
+def limpiarLista():
+    for i in range(len(listasPuntos)):
+        listasPuntos.pop()
+    
+    
 def encontrarDistanciaCorta():
     global puntoUno
     global puntoDos
@@ -43,29 +86,24 @@ def encontrarDistanciaCorta():
     global se_generaron_numeros
     if se_generaron_numeros==False:
         capturarNumeros()
+    
     distanciaCorta=sqrt(((listasPuntos[0][0]-listasPuntos[1][0])**2)+((listasPuntos[0][1]-listasPuntos[1][1])**2)) 
     print(f"Primera: {distanciaCorta}")
-    
-    i=1
-    puntoUno=i
-    puntoDos=i+1
-    while i<len(listasPuntos)-1:
-        distancia=sqrt(((listasPuntos[i][0]-listasPuntos[i+1][0])**2)+((listasPuntos[i][1]-listasPuntos[i+1][1])**2)) 
-        if distancia<distanciaCorta:
-            puntoUno=i
-            puntoDos=i+1
-            distanciaCorta=distancia
-            print(f"Segundo: {distanciaCorta}")
-        i=i+1
+    puntoUno=0
+    puntoDos=1
+    for i in range(len(listasPuntos)):
+        for j in range(i+1,len(listasPuntos)):
+            distancia=sqrt(((listasPuntos[i][X]-listasPuntos[j][X])**2)+((listasPuntos[i][Y]-listasPuntos[j][Y])**2)) 
+            if distancia<distanciaCorta:
+                puntoUno=i
+                puntoDos=j
+                distanciaCorta=distancia
+                
+        
     imprimirResultados()
     se_generaron_numeros=False
-    
-def imprimirResultados():
-    global puntoUno
-    global puntoDos
-    etiquetaResultados.grid(row=7,column=3)
-    etiquetaResultadoNumerico=tk.Label(panel,text=f"Los puntos mas cercanos son  P{puntoUno} y P{puntoDos} \n con una distancia igual a {distanciaCorta}")
-    etiquetaResultadoNumerico.grid(row=7,column=4)
+    limpiarLista()
+
 
 
 def generar():
@@ -77,27 +115,23 @@ def generar():
     global p5
     global listasPuntos
     se_generaron_numeros=True
-    p1 = [random.randint(0, 100) for _ in range(2)]
-    listasPuntos.append(p1)
-    p2 = [random.randint(0, 100) for _ in range(2)]
-    listasPuntos.append(p2)
-    p3 = [random.randint(0, 100) for _ in range(2)]
-    listasPuntos.append(p3)
-    p4 = [random.randint(0, 100) for _ in range(2)]
-    listasPuntos.append(p4)
-    p5 = [random.randint(0, 100) for _ in range(2)]
-    listasPuntos.append(p5)
-    
-    entradaP1X.insert(p1[0],f'{p1[0]}')
-    entradaP1Y.insert(p1[1],f'{p1[1]}')
-    entradaP2X.insert(p2[0],f'{p2[0]}')
-    entradaP2Y.insert(p2[1],f'{p2[1]}')
-    entradaP3X.insert(p3[0],f'{p3[0]}')
-    entradaP3Y.insert(p3[1],f'{p3[1]}')
-    entradaP4X.insert(p4[0],f'{p4[0]}')
-    entradaP4Y.insert(p4[1],f'{p4[1]}')
-    entradaP5X.insert(p5[0],f'{p5[0]}')
-    entradaP5Y.insert(p5[1],f'{p5[1]}')
+    p1 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p2 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p3 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p4 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    p5 = [random.randint(VAL_MIN, VAL_MAX) for _ in range(TAMANIO_LISTA)]
+    insertarListasEnListas()
+    limpiarEntries()
+    entradaP1X.insert(p1[X],f'{p1[X]}')
+    entradaP1Y.insert(p1[Y],f'{p1[Y]}')
+    entradaP2X.insert(p2[X],f'{p2[X]}')
+    entradaP2Y.insert(p2[Y],f'{p2[Y]}')
+    entradaP3X.insert(p3[X],f'{p3[X]}')
+    entradaP3Y.insert(p3[Y],f'{p3[Y]}')
+    entradaP4X.insert(p4[X],f'{p4[X]}')
+    entradaP4Y.insert(p4[Y],f'{p4[Y]}')
+    entradaP5X.insert(p5[X],f'{p5[X]}')
+    entradaP5Y.insert(p5[Y],f'{p5[Y]}')
     
     
 
@@ -120,34 +154,25 @@ etiquetaP4.grid(column=0,row=4)
 etiquetaP5=tk.Label(panel, text="P5")
 etiquetaP5.grid(column=0,row=5)
 entradaP1X=tk.Entry(panel)
-entradaP1X.insert(0,'0')
 entradaP1X.grid(column=1,row=1)
 entradaP1Y=tk.Entry(panel)
-entradaP1Y.insert(0,'0')
 entradaP1Y.grid(column=2,row=1)
 entradaP2X=tk.Entry(panel)
-entradaP2X.insert(0,'0')
 entradaP2X.grid(column=1,row=2)
 entradaP2Y=tk.Entry(panel)
-entradaP2Y.insert(0,'0')
 entradaP2Y.grid(column=2,row=2)
 entradaP3X=tk.Entry(panel)
-entradaP3X.insert(0,'0')
 entradaP3X.grid(column=1,row=3)
 entradaP3Y=tk.Entry(panel)
-entradaP3Y.insert(0,'0')
 entradaP3Y.grid(column=2,row=3)
 entradaP4X=tk.Entry(panel)
-entradaP4X.insert(0,'0')
 entradaP4X.grid(column=1,row=4)
 entradaP4Y=tk.Entry(panel)
-entradaP4Y.insert(0,'0')
 entradaP4Y.grid(column=2,row=4)
 entradaP5X=tk.Entry(panel)
-entradaP5X.insert(0,'0')
 entradaP5X.grid(column=1,row=5)
 entradaP5Y=tk.Entry(panel)
-entradaP5Y.insert(0,'0')
+EstablecerEntry0()
 entradaP5Y.grid(column=2,row=5)
 boton_Calcular=tk.Button(panel,text="Calcular",command=encontrarDistanciaCorta)
 boton_Calcular.grid(column=3,row=1)
@@ -155,7 +180,7 @@ boton_Generar_Random=tk.Button(panel,text="Llenar Random",command=generar)
 boton_Generar_Random.grid(column=3,row=2)
 boton_limpiar=tk.Button(panel,text="Limpiar",command=limpiar)
 boton_limpiar.grid(column=3,row=3)
-
+etiquetaResultadoNumerico=tk.Label(panel)
 etiquetaResultados=tk.Label(panel,text="Resultados: ")
 
 
