@@ -7,11 +7,15 @@ ALTO_FOTO=150
 ANCHO_FOTO_MINIATURA=70
 ALTO_FOTO_MINIATURA=70
 POSICION_INICIAL=0
-lista_posiciones = [[0,0],[0,1],[1,0],[1,1],[2,0],[2,1]] 
+NUM_IMAGENES=0
+regreso=False
+lista_posiciones = [] 
 lista_imagenes_etiquetas=[]
 lista_imagenes_rutas=[]
 lista_imagenes=[]
 lista_imagenes_tk=[]
+lista_frames_opciones=[]
+lista_imagenes_etiquetas_principales=[]
 permutas = []
 def factorial(n):
     if n < 0:
@@ -43,95 +47,117 @@ def generador_permutas_fuerza_bruta(lista):
             
     
 def selecionar_imagen():
+    
+    global lista_imagenes_etiquetas_principales
+    global lista_imagenes
+    global lista_imagenes_tk
     global lista_imagenes_rutas
+    global lista_posiciones
+    global NUM_IMAGENES
     lista_imagenes_rutas.append(filedialog.askopenfilename(
         title="Selecciona una imagen",
         filetypes=(("Archivos de imagen", "*.png;*.jpg;*.jpeg;*.gif"), ("Todos los archivos", "*.*"))
     ))
-    print(lista_imagenes_rutas)
-
+    lista_imagenes.append(Image.open(lista_imagenes_rutas[NUM_IMAGENES]))
+    lista_imagenes[NUM_IMAGENES]=lista_imagenes[NUM_IMAGENES].resize((ANCHO_FOTO, ALTO_FOTO), Image.LANCZOS)
+    lista_imagenes_tk.append(ImageTk.PhotoImage(lista_imagenes[NUM_IMAGENES]))
+    lista_imagenes_etiquetas_principales.append(tk.Label(frame_fotos, image=lista_imagenes_tk[NUM_IMAGENES]))
+    frame_no_imagenes.pack_forget()
+    if NUM_IMAGENES==0:
+        lista_imagenes_etiquetas_principales[NUM_IMAGENES].grid(column=[NUM_IMAGENES],row=[NUM_IMAGENES])
+        lista_posiciones.append([NUM_IMAGENES,NUM_IMAGENES])
+    elif NUM_IMAGENES!=0 and NUM_IMAGENES%2!=0 :
+        lista_imagenes_etiquetas_principales[NUM_IMAGENES].grid(column=[NUM_IMAGENES-1],row=[1])
+        lista_posiciones.append([NUM_IMAGENES-1,1])
+    else:
+        lista_imagenes_etiquetas_principales[NUM_IMAGENES].grid(column=[NUM_IMAGENES],row=[0])
+        lista_posiciones.append([NUM_IMAGENES,0])
+    print(lista_posiciones)
+    NUM_IMAGENES=NUM_IMAGENES+1
+    
+def crear_miniaturas():
+    global lista_imagenes_etiquetas
+    global lista_frames_opciones
+    global NUM_IMAGENES
+    for i in range(0,len(lista_frames_opciones)):
+        for j in range(NUM_IMAGENES):
+            etiqueta=tk.Label(lista_frames_opciones[i], image=lista_imagenes_tk[j], width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA)
+            lista_imagenes_etiquetas.append(etiqueta)
+    print(lista_imagenes_etiquetas)
 def generar_posicion_opciones(posicion_inicial):
     global POSICION_INICIAL
     global permutas
     global lista_imagenes_etiquetas
-
+    global lista_frames_opciones
+    global lista_imagenes_etiquetas_principales
+    global NUM_IMAGENES
+    global regreso
     if POSICION_INICIAL ==0:
-        frame_opcion_1.grid_forget()
+        lista_frames_opciones[0].grid_forget()
         frame_no_disponible.grid(column=0,row=0, sticky="nsew")
         etiqueta_no_disponible.pack()
         
     else:
         if POSICION_INICIAL==1:
             frame_no_disponible.grid_forget()
-            frame_opcion_1.grid(column=0,row=0)
-            
-        lista_imagenes_etiquetas[0].grid(column=permutas[posicion_inicial-1][0][0],row=permutas[posicion_inicial-1][0][1])
-        lista_imagenes_etiquetas[1].grid(column=permutas[posicion_inicial-1][1][0],row=permutas[posicion_inicial-1][1][1])
-        lista_imagenes_etiquetas[2].grid(column=permutas[posicion_inicial-1][2][0],row=permutas[posicion_inicial-1][2][1])
-        lista_imagenes_etiquetas[3].grid(column=permutas[posicion_inicial-1][3][0],row=permutas[posicion_inicial-1][3][1])
-        lista_imagenes_etiquetas[4].grid(column=permutas[posicion_inicial-1][4][0],row=permutas[posicion_inicial-1][4][1])
-        lista_imagenes_etiquetas[5].grid(column=permutas[posicion_inicial-1][5][0],row=permutas[posicion_inicial-1][5][1])
-        #imagen_1_opcion_1.grid(column=permutas[posicion_inicial-1][0][0],row=permutas[posicion_inicial-1][0][1])
-        #imagen_2_opcion_1.grid(column=permutas[posicion_inicial-1][1][0],row=permutas[posicion_inicial-1][1][1])
-        #imagen_3_opcion_1.grid(column=permutas[posicion_inicial-1][2][0],row=permutas[posicion_inicial-1][2][1])
-        #imagen_4_opcion_1.grid(column=permutas[posicion_inicial-1][3][0],row=permutas[posicion_inicial-1][3][1])
-        #imagen_5_opcion_1.grid(column=permutas[posicion_inicial-1][4][0],row=permutas[posicion_inicial-1][4][1])
-        #imagen_6_opcion_1.grid(column=permutas[posicion_inicial-1][5][0],row=permutas[posicion_inicial-1][5][1])
-        
-
+            lista_frames_opciones[0].grid(column=0,row=0)
+        for i in range (0,NUM_IMAGENES):
+            print(i)
+            lista_imagenes_etiquetas[i].grid(column=permutas[posicion_inicial-1][i][0],row=permutas[posicion_inicial-1][i][1])
     
-    label_imagen.grid(column=permutas[posicion_inicial][0][0],row=permutas[posicion_inicial][0][1])
-    label_imagen_1.grid(column=permutas[posicion_inicial][1][0],row=permutas[posicion_inicial][1][1])
-    label_imagen_2.grid(column=permutas[posicion_inicial][2][0],row=permutas[posicion_inicial][2][1])
-    label_imagen_3.grid(column=permutas[posicion_inicial][3][0],row=permutas[posicion_inicial][3][1])
-    label_imagen_4.grid(column=permutas[posicion_inicial][4][0],row=permutas[posicion_inicial][4][1])
-    label_imagen_5.grid(column=permutas[posicion_inicial][5][0],row=permutas[posicion_inicial][5][1])
-    lista_imagenes_etiquetas[6].grid(column=permutas[posicion_inicial][0][0],row=permutas[posicion_inicial][0][1])
-    lista_imagenes_etiquetas[7].grid(column=permutas[posicion_inicial][1][0],row=permutas[posicion_inicial][1][1])
-    lista_imagenes_etiquetas[8].grid(column=permutas[posicion_inicial][2][0],row=permutas[posicion_inicial][2][1])
-    lista_imagenes_etiquetas[9].grid(column=permutas[posicion_inicial][3][0],row=permutas[posicion_inicial][3][1])
-    lista_imagenes_etiquetas[10].grid(column=permutas[posicion_inicial][4][0],row=permutas[posicion_inicial][4][1])
-    lista_imagenes_etiquetas[11].grid(column=permutas[posicion_inicial][5][0],row=permutas[posicion_inicial][5][1])
-    
-    
-    if POSICION_INICIAL==len(permutas):
-        frame_opcion_3.grid_forget()
-        frame_no_disponible.grid(column=2,row=0, sticky="nsew")
+    for i in range(0, NUM_IMAGENES):
+        lista_imagenes_etiquetas_principales[i].grid(column=permutas[posicion_inicial][i][0],row=permutas[posicion_inicial][i][1])
+    j=0   
+    for i in range(NUM_IMAGENES,(NUM_IMAGENES*2)):
+            print(i)
+            lista_imagenes_etiquetas[i].grid(column=permutas[posicion_inicial][j][0],row=permutas[posicion_inicial][j][1])
+            j=j+1
+              
+    print(POSICION_INICIAL)
+    print(len(permutas))
+    if POSICION_INICIAL==len(permutas)-1:
+        lista_frames_opciones[2].grid_forget()
+        frame_no_disponible.grid(column=2,row=0)
         etiqueta_no_disponible.pack()
-    else:
-        if POSICION_INICIAL==len(permutas)-1:
-            
-            frame_no_disponible.grid_forget()
-            frame_opcion_3.grid(column=2,row=0)
+        regreso=True
+        lista_frames_opciones[1].grid(column=1, row=0)
         
-        lista_imagenes_etiquetas[12].grid(column=permutas[posicion_inicial+1][0][0],row=permutas[posicion_inicial+1][0][1])
-        lista_imagenes_etiquetas[13].grid(column=permutas[posicion_inicial+1][1][0],row=permutas[posicion_inicial+1][1][1])
-        lista_imagenes_etiquetas[14].grid(column=permutas[posicion_inicial+1][2][0],row=permutas[posicion_inicial+1][2][1])
-        lista_imagenes_etiquetas[15].grid(column=permutas[posicion_inicial+1][3][0],row=permutas[posicion_inicial+1][3][1])
-        lista_imagenes_etiquetas[16].grid(column=permutas[posicion_inicial+1][4][0],row=permutas[posicion_inicial+1][4][1])
-        lista_imagenes_etiquetas[17].grid(column=permutas[posicion_inicial+1][5][0],row=permutas[posicion_inicial+1][5][1])
+    else:
+        if regreso!=False and POSICION_INICIAL==(len(permutas)-2):
+            frame_no_disponible.grid_forget()
+            lista_frames_opciones[2].grid(column=2,row=0)
+            regreso=False
+        j=0
+        for i in range ((NUM_IMAGENES*2),(NUM_IMAGENES*3)):
+            print(i)
+            lista_imagenes_etiquetas[i].grid(column=permutas[posicion_inicial-1][j][0],row=permutas[posicion_inicial-1][j][1])  
+            j=j+1     
+
 
     
 def siguiente():
     global POSICION_INICIAL
-    POSICION_INICIAL=POSICION_INICIAL+1
-    generar_posicion_opciones(POSICION_INICIAL)
+    if POSICION_INICIAL+1!=len(permutas):
+        POSICION_INICIAL=POSICION_INICIAL+1
+    generar_posicion_opciones(POSICION_INICIAL-1)
 def anterior():
     global POSICION_INICIAL
     if POSICION_INICIAL-1>=0:
         POSICION_INICIAL=POSICION_INICIAL-1
-    generar_posicion_opciones(POSICION_INICIAL)
+    generar_posicion_opciones(POSICION_INICIAL-1)
 def realizar_permutas():
     global permutas
     global lista_posiciones
+    global lista_frames_opciones
     boton_anterior.grid(column=1, row=0)
     boton_siguiente.grid(column=3, row=0)
+    crear_miniaturas()
     generador_permutas_fuerza_bruta(lista_posiciones)
     label_anterior.grid(column=0,row=0)
     label_siguiente.grid(column=4,row=0)
-    frame_opcion_1.grid(column=1, row=0)
-    frame_opcion_2.grid(column=2, row=0)
-    frame_opcion_3.grid(column=3, row=0)
+    lista_frames_opciones[0].grid(column=1, row=0)
+    lista_frames_opciones[1].grid(column=2, row=0)
+    lista_frames_opciones[2].grid(column=3, row=0)
     generar_posicion_opciones(POSICION_INICIAL)  
     print("\n---")
     print(f"Total de permutaciones encontradas: {len(permutas)}")  
@@ -148,45 +174,20 @@ root.title("Permutaciones")
 
 frame_fotos=tk.Frame(pady=15)
 frame_fotos.pack()
+frame_no_imagenes=tk.Frame(frame_fotos,width=500,height=400,highlightbackground='red',highlightthickness=4)
+frame_no_imagenes.pack()
+etiqueta_agregar_imagenes=tk.Label(frame_no_imagenes,text="AGREGA IMAGENES!!!!!!!!",width=80,height=20)
+etiqueta_agregar_imagenes.pack()
 frame_opciones_fotos=tk.Frame(pady=10, padx=10)
 frame_opciones_fotos.pack()
 frame_botones=tk.Frame(pady=10)
 frame_botones.pack()
-frame_opcion_1=tk.Frame(frame_opciones_fotos, width=210,height=210,padx=10)
-frame_opcion_2=tk.Frame(frame_opciones_fotos,width=210,height=210,padx=30, highlightbackground='blue', highlightthickness=3)
-frame_opcion_3=tk.Frame(frame_opciones_fotos,width=210,height=210,padx=20)
+lista_frames_opciones.append(tk.Frame(frame_opciones_fotos, width=210,height=210,padx=10))
+lista_frames_opciones.append(tk.Frame(frame_opciones_fotos,width=210,height=210,padx=30, highlightbackground='blue', highlightthickness=3))
+lista_frames_opciones.append(tk.Frame(frame_opciones_fotos,width=210,height=210,padx=20))
 frame_no_disponible=tk.Frame(frame_opciones_fotos,width=210,height=210,padx=10)
 etiqueta_no_disponible=tk.Label(frame_no_disponible, text="NO DISPONIBLE", height=10, width=28,padx=10)
-imagen=Image.open("imagenes/foto_1.jpg")
-imagen=imagen.resize((ANCHO_FOTO, ALTO_FOTO), Image.LANCZOS)
-imagen_tk=ImageTk.PhotoImage(imagen)
-label_imagen=tk.Label(frame_fotos, image=imagen_tk)
-label_imagen.grid(column=lista_posiciones[0][0],row=lista_posiciones[0][1])
-imagen_1=Image.open("imagenes/foto_2.webp" )
-imagen_1=imagen_1.resize((ANCHO_FOTO, ALTO_FOTO), Image.LANCZOS)
-imagen_tk_1=ImageTk.PhotoImage(imagen_1)
-label_imagen_1=tk.Label(frame_fotos, image=imagen_tk_1)
-label_imagen_1.grid(column=lista_posiciones[1][0],row=lista_posiciones[1][1])
-imagen_2=Image.open("imagenes/foto_3.jpeg" )
-imagen_2=imagen_2.resize((ANCHO_FOTO, ALTO_FOTO), Image.LANCZOS)
-imagen_tk_2=ImageTk.PhotoImage(imagen_2)
-label_imagen_2=tk.Label(frame_fotos, image=imagen_tk_2 )
-label_imagen_2.grid(column=lista_posiciones[2][0],row=lista_posiciones[2][1])
-imagen_3=Image.open("imagenes/foto_4.jpeg")
-imagen_3=imagen_3.resize((ANCHO_FOTO, ALTO_FOTO), Image.LANCZOS)
-imagen_tk_3=ImageTk.PhotoImage(imagen_3)
-label_imagen_3=tk.Label(frame_fotos, image=imagen_tk_3)
-label_imagen_3.grid(column=lista_posiciones[3][0],row=lista_posiciones[3][1])
-imagen_4=Image.open("imagenes/foto_5.webp" )
-imagen_4=imagen_4.resize((ANCHO_FOTO, ALTO_FOTO), Image.LANCZOS)
-imagen_tk_4=ImageTk.PhotoImage(imagen_4)
-label_imagen_4=tk.Label(frame_fotos, image=imagen_tk_4)
-label_imagen_4.grid(column=lista_posiciones[4][0],row=lista_posiciones[4][1])
-imagen_5=Image.open("imagenes/foto_6.webp" )
-imagen_5=imagen_5.resize((ANCHO_FOTO, ALTO_FOTO), Image.LANCZOS)
-imagen_tk_5=ImageTk.PhotoImage(imagen_5)
-label_imagen_5=tk.Label(frame_fotos, image=imagen_tk_5)
-label_imagen_5.grid(column=lista_posiciones[5][0],row=lista_posiciones[5][1])
+#etiquetas grandes
 label_anterior=tk.Label(frame_botones,text="Opcion Anterior")
 label_siguiente=tk.Label(frame_botones,text="Opcion siguiente")
 boton_anterior=tk.Button(frame_botones,text="<<", command=anterior)
@@ -195,24 +196,9 @@ boton_permutas=tk.Button(frame_botones,text="Realizar Permutas", command=realiza
 boton_permutas.grid(column=2, row=0)
 boton_imagen=tk.Button(frame_botones,text="Sube una imagen",command=selecionar_imagen)
 boton_imagen.grid(column=2,row=1)
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_1, image=imagen_tk, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_1, image=imagen_tk_1, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_1, image=imagen_tk_2, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_1, image=imagen_tk_3, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_1, image=imagen_tk_4, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_1, image=imagen_tk_5, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_2, image=imagen_tk, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_2, image=imagen_tk_1, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_2, image=imagen_tk_2, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_2, image=imagen_tk_3, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_2, image=imagen_tk_4, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_2, image=imagen_tk_5, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_3, image=imagen_tk, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_3, image=imagen_tk_1, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_3, image=imagen_tk_2, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_3, image=imagen_tk_3, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_3, image=imagen_tk_4, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
-lista_imagenes_etiquetas.append(tk.Label(frame_opcion_3, image=imagen_tk_5, width=ANCHO_FOTO_MINIATURA, height=ALTO_FOTO_MINIATURA))
+
+
+
 
 root.mainloop()
 
