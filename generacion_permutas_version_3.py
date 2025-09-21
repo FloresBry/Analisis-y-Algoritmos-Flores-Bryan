@@ -26,12 +26,7 @@ def factorial(n):
     for i in range(1, n + 1):
         resultado *= i
     return resultado
-def fisher_yates_shuffle(lista):
 
-    n = len(lista)
-    for i in range(n - 1, 0, -1):
-        j = random.randint(0, i)
-        lista[i], lista[j] = lista[j], lista[i]
 
 def generador_permutas_fuerza_bruta(lista):
     global permutas
@@ -39,7 +34,7 @@ def generador_permutas_fuerza_bruta(lista):
     permutas.append(list(lista))
     while len(permutas) < factorial(n):
         nueva_lista = list(lista)
-        fisher_yates_shuffle(nueva_lista)
+        random.shuffle(nueva_lista)
         
         if nueva_lista not in permutas:
             permutas.append(nueva_lista)
